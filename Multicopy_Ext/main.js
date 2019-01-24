@@ -93,7 +93,7 @@ function addCopy(copy){
  li.className = 'mdl-list__item';
  var span = document.createElement('span');
  span.className = 'mdl-list__item-primary-content';
- span.innerHTML = copyText;
+ span.innerText = copyText;
  span.setAttribute('id', 'copytext');
   var ul = id('list');
   li.appendChild(span);
