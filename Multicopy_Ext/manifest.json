@@ -3,9 +3,9 @@
 
   "manifest_version": 2,
 
-  "name": "MultiCopy Clipboard Beta Github, Copy & Paste",
+  "name": "MultiCopy Clipboard, Copy & Paste",
   "description": "Save infinite copies. Copy & Paste infinitely!",
-  "version": "3.0.0",
+  "version": "3.1.0",
 
   "browser_action": {
     "default_icon": "assets/icon_128_mc_4.png",

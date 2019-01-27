@@ -44,7 +44,7 @@ chrome.runtime.onInstalled.addListener(function(details){
         type:'basic',
         iconUrl: 'assets/icon_128_mc_2.png',
         title: 'Welcome to MultiCopy!',
-        message:  "Use Ctrl+Shift+A or open the extension to save copies!"
+        message:  "Alt+C to copy. Right click menu to copy & paste!"
 
       })
     }
@@ -53,7 +53,7 @@ chrome.runtime.onInstalled.addListener(function(details){
         type:'basic',
         iconUrl: 'assets/icon_128_mc_2.png',
         title: 'MultiCopy has been updated!',
-        message: " Use Alt+C or open the extension to save copies!"
+        message: "Alt+C to copy. Right click menu to copy & paste!"
 
       })
     }
@@ -84,9 +84,16 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
     });
        }
        else if(info.menuItemId.indexOf('paste') != -1){
-         chrome.tabs.executeScript( {
-           code: "var focused = document.activeElement; focused.value = ' " + info.menuItemId.split(',')[2] + "';"
-         })
+         var storage = chrome.storage.local;
+
+     storage.get('copies', function(result){
+       var gottenCopies = result.copies;
+       var currentcopy = gottenCopies.reverse()[Number(info.menuItemId.split(',')[1])]
+       chrome.tabs.executeScript( {
+         code: "var focused = document.activeElement; focused.value = ' " + currentcopy + "';"
+       })
+     });
+
 }
 });
 
