@@ -164,7 +164,7 @@ ul{
     min-height: 38px;
     font-size: 14px;
     padding:0;
-    padding-left: 5px;
+    padding-left: 0px;
   }
   ul .mdl-button .material-icons.copy{
     color:#2892c5;

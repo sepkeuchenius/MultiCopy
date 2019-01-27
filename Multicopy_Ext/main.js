@@ -88,39 +88,14 @@ function addCopy(copy){
   }
   if(copyText){
   console.log(copyText);
- var hr = document.createElement('hr');
-  var li = document.createElement('li');
- li.className = 'mdl-list__item';
- var span = document.createElement('span');
- span.className = 'mdl-list__item-primary-content';
- span.innerText = copyText;
- span.setAttribute('id', 'copytext');
-  var ul = id('list');
-  li.appendChild(span);
- var secondary = document.createElement('span');
- secondary.className = "mdl-list__item-secondary-action";
- var button = document.createElement('button');
- button.className = "mdl-button mdl-js-button mdl-button--icon";
- var icon = document.createElement('i');
- icon.className = "material-icons delete";
- icon.innerHTML = 'delete';
- button.appendChild(icon);
- var copybutton = document.createElement('button');
- copybutton.className = "mdl-button mdl-js-button mdl-button--icon";
- var copyicon = document.createElement('i');
- copyicon.className = "material-icons copy";
- copyicon.innerHTML = 'content_copy';
- copybutton.appendChild(copyicon);
- secondary.appendChild(copybutton);
- secondary.appendChild(button);
-  li.appendChild(secondary);
- $('ul').prepend(li);
- //$('li').prepend(secondary)
- //$(secondary).appendTo($("li"))
+  var $button2 = $("<button class='mdl-button mdl-js-button mdl-button--icon'><i class='material-icons delete'>delete</i></button>");
+  var $button1 = $("<button class='mdl-button mdl-js-button mdl-button--icon'><i class='material-icons copy'>content_copy</i></button>");
+  var $span1 = $("<span class='mdl-list__item-primary-content'></span>").text(copyText);
+  var $span2 = $("<span class='mdl-list__item-secondary-action'></span>").append($button1).append($button2);
+ var $li  =$("<li class='mdl-list__item'></li>").append($span1).append($span2)
+ $('ul').prepend($li);
 
-  // li.innerHTML += '<span class="mdl-list__item-secondary-action"> <button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">delete</i>';
-
-  button.addEventListener('click', function(){
+  $button2.on('click', function(){
     var copyToDelete = this.parentNode.parentNode;
     console.log(copyToDelete)
     var copyBody = copyToDelete.parentNode;
@@ -141,7 +116,7 @@ function addCopy(copy){
     snackbarContainer.MaterialSnackbar.showSnackbar(data);
     setStorage();
   });
-  copybutton.addEventListener('click', function(){
+  $button1.on('click', function(){
     var copytext = this.parentNode.parentNode.childNodes[0].innerHTML;
     console.log(copytext);
     id('copier').value = copytext;
@@ -166,18 +141,20 @@ function addCopy(copy){
    id('copy').focus();
 setStorage();
 
+
 }}
 function setStorage(){
   var copyes = document.getElementsByTagName('li');
   var copies = [];
   for(var i=0; i<copyes.length; i++){
-    var copy = copyes[i].childNodes[0].innerHTML;
+    var copy = copyes[i].childNodes[0].innerText;
     console.log(copy);
   // console.log(copy);
     copies.unshift(copy);
   }
   console.log(copies);
   storage.set({'copies': copies});
+  //chrome.extension.getBackgroundPage().reloadContext();
   // storage.get({'copies': []}, function(result){
   //   var gottenCopies = result.copies;
   //   // console.log(gottenCopies);

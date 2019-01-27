@@ -1,62 +1,43 @@
 //createContexts();
 
 //function createContexts(){
-  chrome.contextMenus.remove('add', function() {
-chrome.contextMenus.create({
-  id:'add',
-  title: "Add copy: %s",
-  contexts:["selection"],
+reloadAllContexts();
+function reloadAllContexts(){
+  chrome.contextMenus.removeAll();
+    chrome.contextMenus.create({
+      id:'paste',
+      title: "Paste copy",
+      contexts:["editable"],
+    },
+  pasteContext());
+  chrome.contextMenus.create({
+    id:'add',
+    title: "Add copy: %s",
+    contexts:["selection"],
+  });
+}
+
+function pasteContext(){
+  var storage = chrome.storage.local;
+    storage.get('copies', function(result){
+      var gottenCopies = result.copies;
+      newarray = gottenCopies.reverse();
+      console.log(newarray);
+      for(var i in newarray){
+
+              chrome.contextMenus.create({
+                title: newarray[i],
+                parentId: 'paste',
+                id: 'pastes,' + i  + ','+ newarray[i],
+                contexts: ["editable"],
+              })
+          }
+    });
+}
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+  reloadAllContexts();
 });
 
-});
-
-//   chrome.contextMenus.remove('paste', function() {
-// chrome.contextMenus.create({
-//   id:'paste',
-//   title: "Paste copy",
-//   contexts:["editable"],
-// });
-// chrome.contextMenus.create({
-//   title: 'test',
-//   parentId: 'paste',
-//   id: 'test',
-//   contexts: ["editable"],
-// });
-//});
-// var con = 0;
-// var storage = chrome.storage.local;
-// storage.get('copies', function(result){
-//   var gottenCopies = result.copies;
-//   //alert(gottenCopies)
-//   for(var i in gottenCopies){
-//     chrome.contextMenus.create({
-//       title: gottenCopies[i],
-//       parentId: 'paste',
-//       id: 'pastes' + i,
-//       contexts: ["editable"],
-//     })
-//   }
-//   con = i;
-// });
-// }
-// chrome.storage.onChanged.addListener(function(changes, namespace) {
-//   var storage = chrome.storage.local;
-//   for(var i=0; i<=con; i++){
-//     chrome.contextMenus.remove('paste' + i, function(){});
-//   }
-//   storage.get('copies', function(result){
-//     var gottenCopies = result.copies;
-//     //alert(gottenCopies)
-//     for(var i in gottenCopies){
-//       chrome.contextMenus.create({
-//         title: gottenCopies[i],
-//         parentId: 'paste',
-//         id: 'pastes' + i,
-//         contexts: ["editable"],
-//       })
-//     }
-//   });
-// }
 chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
       chrome.notifications.create('install', {
@@ -89,7 +70,7 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
         gottenCopies = [];
       }
 
-      gottenCopies.unshift(newCopy);
+      gottenCopies.push(newCopy);
 
       storage.set({'copies': gottenCopies});
 
@@ -102,8 +83,11 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
 
     });
        }
-       else if(info.menuItemId == 'paste'){}
-
+       else if(info.menuItemId.indexOf('paste') != -1){
+         chrome.tabs.executeScript( {
+           code: "var focused = document.activeElement; focused.value = ' " + info.menuItemId.split(',')[2] + "';"
+         })
+}
 });
 
 chrome.commands.onCommand.addListener(function(command) {
@@ -140,3 +124,40 @@ chrome.commands.onCommand.addListener(function(command) {
        };
 
 });
+chrome.extension.onMessage.addListener(
+    function(request, sender, sendResponse){
+        // if(request.msg == "reloadContext"){
+        //   //alert('test');
+        //
+        // }
+    }
+);
+// function reloadContext(){
+//   //alert('falla')
+//   try{
+//     chrome.contextMenus.remove('paste', function() {
+//   chrome.contextMenus.create({
+//     id:'paste',
+//     title: "Paste copy",
+//     contexts:["editable"],
+//   },
+//   pasteContext());
+//   // chrome.contextMenus.create({
+//   //   title: 'test',
+//   //   parentId: 'paste',
+//   //   id: 'test',
+//   //   contexts: ["editable"],
+//   // });
+//   }, function(){alert('callback!')});
+//   }
+//   catch(err){
+//     chrome.contextMenus.create({
+//       id:'paste',
+//       title: "Paste copy",
+//       contexts:["editable"],
+//     },
+//   pasteContext());
+//   }
+//   //pasteContext();
+//
+// }
