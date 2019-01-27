@@ -100,6 +100,7 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
 chrome.commands.onCommand.addListener(function(command) {
 
   if(command === "copy_to_clipboard"){
+    console.log('called')
     chrome.tabs.executeScript( {
       code: "window.getSelection().toString();"
     }, function(selection) {
