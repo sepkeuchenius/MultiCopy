@@ -24,6 +24,9 @@ function pasteContext(){
       newarray = gottenCopies.reverse();
       console.log(newarray);
       for(var i in newarray){
+        chrome.contextMenus.remove('pastes,' + i + ','+ newarray[i]);
+      }
+      for(var i in newarray){
 
               chrome.contextMenus.create({
                 title: newarray[i],
@@ -89,11 +92,17 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
      storage.get('copies', function(result){
        var gottenCopies = result.copies;
        var currentcopy = gottenCopies.reverse()[Number(info.menuItemId.split(',')[1])]
-       chrome.tabs.executeScript( {
-         code: "var focused = document.activeElement; focused.value = ' " + currentcopy + "';"
-       })
-     });
+       console.log(currentcopy)
+       chrome.tabs.executeScript(null, { file: "jquery-3.2.0.min.js" }, function() {
+         chrome.tabs.executeScript(null, { code: "var topaste =\"" + currentcopy + "\";" + "var $txt = $(':focus');var caretPos = $txt[0].selectionStart;var textAreaTxt = $txt.val();var txtToAdd = topaste;$txt.val(textAreaTxt.substring(0, caretPos) + txtToAdd + textAreaTxt.substring(caretPos) );"})
 
+
+
+
+
+
+     });
+});
 }
 });
 
@@ -113,7 +122,7 @@ chrome.commands.onCommand.addListener(function(command) {
             if(!oldCopies){
               oldCopies = [];
             }
-            oldCopies.unshift(newCopy);
+            oldCopies.push(newCopy);
             var storage = chrome.storage.local;
             //alert(oldCopies);
             //alert(storage);
@@ -129,6 +138,7 @@ chrome.commands.onCommand.addListener(function(command) {
         })
       }
     });
+    reloadAllContexts();
        };
 
 });
